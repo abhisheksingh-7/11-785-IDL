@@ -1,0 +1,10 @@
+Age,Sex,Job,Housing,Saving accounts,Checking account,Credit amount,Duration,Purpose,Risk
+55,male,2,free,little,NA,1597,24,education,good
+48,female,1,rent,little,moderate,1795,18,radio/TV,good
+24,female,2,own,little,little,4272,20,furniture/equipment,good
+35,male,2,own,NA,NA,976,12,radio/TV,good
+24,female,0,rent,NA,moderate,7472,12,car,good
+24,male,2,own,little,little,9271,36,car,bad
+26,male,1,own,little,moderate,590,6,radio/TV,good
+65,male,2,own,NA,NA,930,12,radio/TV,good
+55,male,3,free,little,moderate,9283,42,car,good
