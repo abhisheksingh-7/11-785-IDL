@@ -2,3 +2,6 @@
 Quiz/*
 *.vscode
 Lectures/*
+*.csv
+*.json
+*.pdf
