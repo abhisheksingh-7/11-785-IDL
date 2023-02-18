@@ -1,6 +1,5 @@
 import numpy as np
 
-
 class Identity:
 
     def forward(self, Z):
@@ -32,6 +31,7 @@ class Sigmoid:
     def backward(self):
         dAdZ = self.A - (self.A * self.A)
         assert dAdZ.shape == self.A.shape
+        return dAdZ
 
 class Tanh:
     """
@@ -51,6 +51,7 @@ class Tanh:
     def backward(self):
         dAdZ = 1 - (self.A * self.A)
         assert dAdZ.shape == self.A.shape
+        return dAdZ
 
 class ReLU:
     """
@@ -67,3 +68,4 @@ class ReLU:
     def backward(self):
         dAdZ = np.where(self.A > 0, 1, 0)
         assert dAdZ.shape == self.A.shape
+        return dAdZ
