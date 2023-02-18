@@ -43,15 +43,15 @@ class Linear:
         dZdW = self.A
         assert dZdW.shape == self.A.shape
         dZdb = self.Ones
-        assert dZdb.shape == (self.A.shape[0],)
+        assert dZdb.shape == (self.A.shape[0],1)
 
         dLdA = dLdZ @ np.transpose(dZdA)
         assert dLdA.shape == self.A.shape
         dLdW = np.transpose(dLdZ) @ self.A
         assert dLdW.shape == self.W.shape
         dLdb = np.transpose(dLdZ) @ dZdb
-        assert dLdb.shape == (self.W.shape[0],)
-        
+        assert dLdb.shape == (self.W.shape[0],1)
+
         self.dLdW = dLdW / self.N
         self.dLdb = dLdb / self.N
 
