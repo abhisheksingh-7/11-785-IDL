@@ -1,7 +1,14 @@
-.DS_Store
-Quiz/*
+*.DS_Store
+Quiz/
 *.vscode
-Lectures/*
+Lectures/
 *.csv
 *.json
 *.pdf
+*.pth
+*.txt
+*.json
+*.zip
+*.tar
+*__pycache__*
+*.pyc
