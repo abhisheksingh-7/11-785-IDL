@@ -15,7 +15,7 @@
 - Scheduler: `CosineAnnealingWarmRestarts`
 - Mixed Precision Training: `Yes`
 - Architecture Details: View `HW2P2-wandb-ablations.csv` or `HW2P2-NAS.xlsx`
-- WandB Experiment Screenshots: View `HW2P2-wandb-charts.pdf`
+- WandB Experiment Screenshots: View `HW2P2-wandb-charts.pdf` or https://wandb.ai/deeper_learners/hw2p2-ablations
 - Final Submission Test Data Predictions: View `submission.csv`
 - Other Architectures Tried: ConvNeXT
 - Final `training_accuracy` = 99.92%
