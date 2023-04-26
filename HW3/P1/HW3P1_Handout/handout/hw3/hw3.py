@@ -18,8 +18,8 @@ class CharacterPredictor(object):
     def __init__(self, input_dim, hidden_dim, num_classes):
         super(CharacterPredictor, self).__init__()
         """The network consists of a GRU Cell and a linear layer."""
-        self.rnn = None # TODO
-        self.projection = None # TODO
+        self.rnn = GRUCell(in_dim=input_dim, hidden_dim=hidden_dim)
+        self.projection = Linear(in_features=hidden_dim, out_features=num_classes)
         self.projection.W = np.random.rand(num_classes, hidden_dim)
 
     def init_rnn_weights(
@@ -55,14 +55,12 @@ class CharacterPredictor(object):
             hidden state at current time-step.
 
         """
-        hnext = None # TODO
+        hnext = self.rnn(x, h)
         # self.projection expects input in the form of batch_size * input_dimension
         # Therefore, reshape the input of self.projection as (1,-1)
-        logits = None # TODO
-        # logits = logits.reshape(-1,) # uncomment once code implemented
-        # return logits, hnext
-        raise NotImplementedError
-
+        logits = self.projection.forward(hnext.reshape((1, -1)))
+        logits = logits.reshape(-1,) 
+        return logits, hnext
 
 def inference(net, inputs):
     """CharacterPredictor inference.
@@ -85,5 +83,11 @@ def inference(net, inputs):
 
     """
     
-    # This code should not take more than 10 lines. 
-    raise NotImplementedError
+    logits = []
+    gru_hidden_dim = net.rnn.h
+    hnext = np.zeros(gru_hidden_dim) # h_0
+    for i in range(inputs.shape[0]):
+        logit, hnext = net(inputs[i], hnext)
+        logits.append(logit)
+    return np.array(logits)
+

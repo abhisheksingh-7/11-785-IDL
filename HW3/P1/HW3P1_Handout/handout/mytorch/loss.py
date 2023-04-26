@@ -52,7 +52,24 @@ class SoftmaxCrossEntropy(Criterion):
         self.labels = y
 
         self.loss = None
+        self.N, self.C = self.logits.shape
 
+        Ones_C = np.ones((self.C, 1))
+        Ones_N = np.ones((self.N, 1))
+
+        exp_A = np.exp(self.logits)
+        row_sum = np.reshape(np.sum(exp_A, axis=1), (self.N,1))
+
+        self.softmax = exp_A / row_sum
+        assert self.softmax.shape == self.logits.shape
+
+        crossentropy = (-self.labels * np.log(self.softmax)) @ Ones_C
+        assert crossentropy.shape == (self.N, 1)
+
+        sum_crossentropy = np.transpose(Ones_N) @ crossentropy
+        L = sum_crossentropy / self.N
+
+        return L[0][0]
         return self.loss
 
     def backward(self):
@@ -62,6 +79,6 @@ class SoftmaxCrossEntropy(Criterion):
             out (np.array): (batch size, 10)
         """
 
-        self.gradient = None
+        self.gradient = self.softmax - self.labels
 
         return self.gradient

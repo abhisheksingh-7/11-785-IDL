@@ -30,6 +30,9 @@ class RNNCell(object):
         self.db_ih = np.zeros(h)
         self.db_hh = np.zeros(h)
 
+        # misc
+        self.Ones = None
+
     def init_weights(self, W_ih, W_hh, b_ih, b_hh):
         self.W_ih = W_ih
         self.W_hh = W_hh
@@ -68,11 +71,9 @@ class RNNCell(object):
         """
         ht = tanh(Wihxt + bih + Whhht−1 + bhh) 
         """
-
-        h_t = None # TODO
-
-        # return h_t
-        raise NotImplementedError
+        h_t = self.activation.forward((x @ np.transpose(self.W_ih)) + (np.ones((x.shape[0], 1)) @ self.b_ih.reshape(1, -1)) + (h_prev_t @ np.transpose(self.W_hh)) + (np.ones((x.shape[0], 1)) @ self.b_hh.reshape(1, -1)))
+        assert h_t.shape == (x.shape[0], self.hidden_size)
+        return h_t
 
     def backward(self, delta, h_t, h_prev_l, h_prev_t):
         """
@@ -101,22 +102,30 @@ class RNNCell(object):
             Derivative w.r.t.  the previous time step and current layer
 
         """
-        batch_size = delta.shape[0]
+        batch_size, hidden_size = delta.shape
+        batch_size, input_size = h_prev_l.shape
+
         # 0) Done! Step backward through the tanh activation function.
         # Note, because of BPTT, we had to externally save the tanh state, and
         # have modified the tanh activation function to accept an optionally input.
-        dz = None # TODO
+        dz = delta * self.activation.backward(state=h_t)
+        assert dz.shape == delta.shape
 
         # 1) Compute the averaged gradients of the weights and biases
-        self.dW_ih += None # TODO
-        self.dW_hh += None # TODO
-        self.db_ih += None # TODO
-        self.db_hh += None # TODO
+        self.dW_ih += np.divide((np.transpose(dz) @ h_prev_l), batch_size)
+        assert self.dW_ih.shape == (hidden_size, input_size)
+        self.dW_hh += np.divide((np.transpose(dz) @ h_prev_t), batch_size)
+        assert self.dW_hh.shape == (hidden_size, hidden_size)
+        self.db_ih += np.divide((np.transpose(dz) @ np.ones((batch_size,1))).reshape(-1), batch_size)
+        assert self.db_ih.shape == (hidden_size, )
+        self.db_hh += np.divide((np.transpose(dz) @ np.ones((batch_size,1))).reshape(-1), batch_size)
+        assert self.db_ih.shape == (hidden_size, )
 
         # # 2) Compute dx, dh_prev_t
-        dx        = None # TODO
-        dh_prev_t = None # TODO
+        dx = dz @ self.W_ih
+        assert dx.shape == (batch_size, input_size)
+        dh_prev_t = dz @ self.W_hh
+        assert dh_prev_t.shape == (batch_size, hidden_size)
 
         # 3) Return dx, dh_prev_t
-        # return dx, dh_prev_t
-        raise NotImplementedError
+        return dx, dh_prev_t
