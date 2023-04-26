@@ -1,37 +1,51 @@
 import numpy as np
 
-# TODO: Implement this code similar to how you did for HW1P1 or HW2P1.
-
 class Linear:
 
     def __init__(self, in_features, out_features, debug=False):
-
-        self.W = np.zeros((out_features, in_features), dtype="f")
-        self.b = np.zeros((out_features, 1), dtype="f")
-        self.dLdW = np.zeros((out_features, in_features), dtype="f")
-        self.dLdb = np.zeros((out_features, 1), dtype="f")
+        """
+        Initialize the weights and biases with zeros
+        Checkout np.zeros function.
+        Read the writeup to identify the right shapes for all.
+        """
+        self.W = np.zeros((out_features, in_features))
+        assert self.W.shape == (out_features, in_features)
+        self.b = np.zeros(out_features)
+        assert self.b.shape == (out_features,)
 
         self.debug = debug
 
     def forward(self, A):
-
+        """
+        :param A: Input to the linear layer with shape (N, C0)
+        :return: Output Z of linear layer with shape (N, C1)
+        Read the writeup for implementation details
+        """
         self.A = A
-        self.N = A.shape[0]
-        self.Ones = np.ones((self.N, 1), dtype="f")
-        Z = None  # TODO
+        self.N = A.shape[0]  # store the batch size of input
+        # Think how will self.Ones helps in the calculations and uncomment below
+        self.Ones = np.ones((self.N,1))
 
-        return NotImplemented
+        # Z = (A . W^T) + (Ones . B^T)
+        # Z = (self.A @ np.transpose(self.W)) + (self.Ones @ np.transpose(self.b))
+        Z = (self.A @ np.transpose(self.W)) + (self.Ones @ self.b.reshape(1, -1))
+        assert Z.shape == (self.N, self.W.shape[0])
+
+        return Z
 
     def backward(self, dLdZ):
+        """
+        :param dLdZ: how changes in the layer's output affect loss
+        :return dLdA: how changes in the layer's inputs affect loss
+        """
+        dZdA = np.transpose(self.W)
+        dZdW = self.A
+        dZdb = self.Ones
 
-        dZdA = None  # TODO
-        dZdW = None  # TODO
-        dZdi = None
-        dZdb = None  # TODO
-        dLdA = None  # TODO
-        dLdW = None  # TODO
-        dLdi = None
-        dLdb = None  # TODO
+        dLdA = dLdZ @ np.transpose(dZdA)
+        dLdW = np.transpose(dLdZ) @ dZdW
+        dLdb = np.transpose(dLdZ) @ dZdb
+
         self.dLdW = dLdW / self.N
         self.dLdb = dLdb / self.N
 
@@ -39,9 +53,7 @@ class Linear:
 
             self.dZdA = dZdA
             self.dZdW = dZdW
-            self.dZdi = dZdi
             self.dZdb = dZdb
             self.dLdA = dLdA
-            self.dLdi = dLdi
 
-        return NotImplemented
+        return dLdA
